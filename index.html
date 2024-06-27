@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notification Request</title>
+  <style>
+    .wrapper {
+      margin: 20px;
+    }
+    button {
+      padding: 10px 20px;
+    }
+    code {
+      display: block;
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f1f1f1;
+      border: 1px solid #ddd;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <button id="subscribeButton">Solicitar Permiso</button>
+  </div>
+  <div>
+    <code id="responseOutput"></code>
+  </div>
+  
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/push.js/1.0.9/push.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      const VAPID_PUBLIC_KEY = "BNyftv47636byp0LRWTP7c1e7GAOWUmjvYAnn1KvPArLDgQ_pKakPxgkhxztqtVKdXz8jkPd18RvqGgaVxUqgy0";
+
+      $('#subscribeButton').click(function() {
+        if ('serviceWorker' in navigator && 'PushManager' in window) {
+          navigator.serviceWorker.register('service-worker.js')
+            .then(function(registration) {
+              return registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+              });
+            })
+            .then(function(subscription) {
+              $('#responseOutput').text(JSON.stringify(subscription));
+            })
+            .catch(function(error) {
+              $('#responseOutput').text('Error: ' + error);
+            });
+        } else {
+          $('#responseOutput').text('Service Worker or Push Notifications not supported in this browser.');
+        }
+      });
+
+      function urlBase64ToUint8Array(base64String) {
+        const padding = '='.repeat((4 - base64String.length % 4) % 4);
+        const base64 = (base64String + padding)
+          .replace(/\-/g, '+')
+          .replace(/_/g, '/');
+
+        const rawData = window.atob(base64);
+        const outputArray = new Uint8Array(rawData.length);
+
+        for (let i = 0; i < rawData.length; ++i) {
+          outputArray[i] = rawData.charCodeAt(i);
+        }
+        return outputArray;
+      }
+    });
+  </script>
+</body>
+</html>
