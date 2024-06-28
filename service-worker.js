@@ -6,8 +6,9 @@ self.addEventListener('push', function(event) {
     //   image: data.image
     // });
 
-    self.registration.showNotification(data.title, 
+    self.registration.showNotification(data.title, {
       ...data
+    }
     );
   });
   
