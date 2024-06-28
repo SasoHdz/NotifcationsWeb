@@ -47,7 +47,8 @@
               $('#responseOutput').text(JSON.stringify(subscription));
             })
             .catch(function(error) {
-              $('#responseOutput').text('Error: ' + error);
+              $('#responseOutput').text('Error: ' + error.message);
+              console.error('Subscription error:', error);
             });
         } else {
           $('#responseOutput').text('Service Worker or Push Notifications not supported in this browser.');
